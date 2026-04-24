@@ -1,0 +1,18 @@
+# python
+__pycache__/
+*.pyc
+.env
+venv/
+.DS_Store
+.coverage
+
+# données brutes
+/data
+*.csv
+*.xlsx
+
+# dbt
+target/
+dbt_packages/
+logs/
+.user.yml

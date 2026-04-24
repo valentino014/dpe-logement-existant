@@ -1,0 +1,15 @@
+services:
+  projet1_postgres:
+    image: postgres:15
+    container_name: projet1_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: projet1_db
+    ports:
+      - "5433:5432"       # port 5433 côté hôte pour ne pas avoir de conflit avec Jaffle qui eest sur 5432
+    volumes:
+      - projet1_data:/var/lib/postgresql/data
+
+volumes:
+  projet1_data:
