@@ -1,0 +1,28 @@
+version: 2
+## dbt test --select source:ademe
+sources:
+  - name: ademe
+    description: "Données ADEME des DPE logements existants"
+    schema: public
+    tables: 
+      - name: dpe_paris_2025
+        description: "Millésime 2025, scope Paris, ~175k lignes"
+        columns:
+          - name: numero_dpe
+            tests:
+              - unique
+              - not_null
+          - name: code_insee_ban
+            tests:
+              - not_null
+          - name: etiquette_dpe
+            tests:
+              - accepted_values:
+                  arguments:
+                    values: ['A','B','C','D','E','F','G']
+          - name: etiquette_ges
+            tests:
+              - accepted_values:
+                  arguments:
+                    values: ['A','B','C','D','E','F','G']
+

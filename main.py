@@ -6,9 +6,9 @@ FICHIER = "data/dpe03existant.csv"
 if __name__ == "__main__":
     dpe = charger_csv(FICHIER)
     engine = create_engine("postgresql://postgres:postgres@localhost:5433/projet1_db")
-    # nécessite de créer le schéma avant dans PG : CREATE SCHEMA IF NOT EXISTS raw;
-    print(f"Début de l'insertion de {len(dpe)} lignes dans raw.dpe_paris_2025 en cours...")
+    # nécessite de créer le schéma avant dans PG : CREATE SCHEMA IF NOT EXISTS public;
+    print(f"Début de l'insertion de {len(dpe)} lignes dans public.dpe_paris_2025 en cours...")
     # dpe.to_sql("dpe_paris_2025", con=engine, schema='raw', if_exists="replace", index=False, chunksize=10000, method='multi')
-    dpe.to_sql("dpe_paris_2025", con=engine, schema='raw', if_exists="replace", index=False, chunksize=1000)
+    dpe.to_sql("dpe_paris_2025", con=engine, schema='public', if_exists="replace", index=False, chunksize=1000)
     print("Insertion terminée")
     

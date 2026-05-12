@@ -1,7 +1,6 @@
 # DPE Logements existants — Analytics dbt
 
-Projet dbt en cours de construction sur le Diagnostic de Performance 
-Énergétique des logements existants sur l'année 2025 à Paris.
+Projet dbt en cours de construction sur le Diagnostic de Performance Énergétique des logements existants sur l'année 2025 à Paris.
 
 Le DPE est au cœur de l'actualité française afin de réduire les émissions de CO2 et la consommation d'énergie en France. 
 
@@ -32,12 +31,12 @@ Voir `exploration.md` pour les notes en cours.
 
 1. Cloner le repo
 ```bash
-    git clone https://github.com/valentino014/dpe-logement-existant.git
+git clone https://github.com/valentino014/dpe-logement-existant.git
 ```
 
 2. Installer les dépendances:
 ```bash
-   pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 3. Télécharger le CSV depuis ADEME :
@@ -46,19 +45,24 @@ Voir `exploration.md` pour les notes en cours.
    - Appliquer les filtres : `code_departement_ban = 75`, `date_visite_diagnostiqueur` entre `2025-01-01` et `2025-12-31`
    - Exporter en CSV et placer le fichier dans `data/dpe03existant.csv`
 
-4. lancer PostgreSQL:
+4. Lancer PostgreSQL:
 ```bash
-   docker compose up -d
+docker compose up -d
 ```
 
-5. Créer le schéma dans PostgreSQL :
+5. Ouvrir postgreSQL en ligne de commande :
 ```bash
-CREATE SCHEMA IF NOT EXISTS raw;
+Cocker exec -it projet1_postgres psql -U postgres -d projet1_db
 ```
 
-6. Lancer python:
+6. Créer le schéma dans PostgreSQL :
 ```bash
-    python3 main.py
+CREATE SCHEMA IF NOT EXISTS public;
+```
+
+7. Lancer python:
+```bash
+python3 main.py
 ```
 
 ## Tests

@@ -1,0 +1,7 @@
+version: 2
+
+models:
+  - name: dim_etiquette
+  - name: dim_logement
+  - name: dim_zone
+  - name: fct_dpe

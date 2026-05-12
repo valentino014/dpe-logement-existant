@@ -1,0 +1,49 @@
+version: 2
+
+models:
+  - name: stg_dpe
+    description: "DPE Paris 2025 données nettoyé"
+    columns:
+      - name: numero_dpe
+        description: "Identifiant unique du diagnostic"
+        tests:
+          - unique
+          - not_null
+      - name: date_visite_diagnostiqueur
+        description: "Date de la visite du diagnostiqueur"
+        tests:
+          - not_null
+      - name: date_fin_validite_dpe
+        description: "Date de fin de la validité de l'étiquette"
+        tests:
+          - not_null
+      - name: modele_dpe
+        description: "Nom du modèle DPE utilisé"
+        tests:
+          - not_null
+      - name: version_dpe
+        description: "Nom du modèle DPE utilisé"
+        tests:
+          - not_null
+      - name: code_insee_ban
+        description: "Code insee BAN"
+        tests:
+          - not_null
+      - name: code_postal_ban
+        description: "Code postal BAN"
+        tests:
+          - not_null
+      - name: etiquette_dpe
+        description: "Étiquette du diagnostic de performance energétique (A à G)"
+        tests:
+          - not_null
+      - name: etiquette_ges
+        description: "Étiquette de gaz à effet de serre (A à G)"
+        tests:
+          - not_null
+      - name: type_batiment
+        description: "Type de batiment (immeuble uniquement)"
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['appartement', 'immeuble', 'maison']
