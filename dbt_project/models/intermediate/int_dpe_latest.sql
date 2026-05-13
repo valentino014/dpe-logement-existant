@@ -6,10 +6,10 @@ with initial as (
 deduplicated as (
 	select
 		*,
-	row_number() over (
-		partition by dpe.adresse_ban, dpe.numero_etage_appartement
-		order by dpe.date_reception_dpe desc, numero_dpe desc
-	) as rn
+		row_number() over (
+			partition by dpe.adresse_ban, dpe.numero_etage_appartement
+			order by dpe.date_reception_dpe desc, numero_dpe desc
+		) as rn
 	from
 		initial dpe
 )

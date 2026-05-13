@@ -31,7 +31,10 @@ with cleaned as (
         upper(trim(etiquette_dpe)) as etiquette_dpe,
         upper(trim(etiquette_ges)) as etiquette_ges,
         cast(adresse_ban as text) as adresse_ban,
-        cast(numero_etage_appartement as text) as numero_etage_appartement
+        cast(numero_etage_appartement as text) as numero_etage_appartement,
+        cast(qualite_isolation_plancher_haut_comble_amenage as text) as qualite_isolation_plancher_haut_comble_amenage,
+        cast(qualite_isolation_plancher_haut_comble_perdu as text) as qualite_isolation_plancher_haut_comble_perdu,
+        cast(qualite_isolation_plancher_haut_toit_terrasse as text) as qualite_isolation_plancher_haut_toit_terrasse
     from {{ source('ademe', 'dpe_paris_2025') }}
     -- Filtre Paris arrondissements (exclut 75056 = Paris commune, hors scope analytique)
     where code_insee_ban in (

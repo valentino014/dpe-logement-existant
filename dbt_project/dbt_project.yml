@@ -34,3 +34,12 @@ models:
     # Config indicated by + and applies to all files under models/example/
     staging:
       +materialized: view
+
+seeds:
+  dbt_project:
+    seed_etiquette:
+      +column_types:
+        lettre: varchar(1)
+        libelle: text
+        couleur_hex: varchar(7)
+        ordre_classement: int 
