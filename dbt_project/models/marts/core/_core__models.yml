@@ -2,6 +2,93 @@ version: 2
 
 models:
   - name: dim_etiquette
-  - name: dim_logement
+    description: "Détails des étiquettes (DPE et GES) par dpe"
+    columns:
+      - name: etiquette_key
+        description: "Identifiant unique de l'étiquette (Surrogate key, hash MD5)"
+        tests:
+          - unique
+          - not_null
+      - name: lettre
+        description: "Note signifiant la performance energétique du logement (A à G)"
+        tests:
+          - unique
+          - not_null
+      - name: libelle
+        description: "Texte explicitant la note"
+        tests:
+          - unique
+          - not_null
+      - name: couleur_hex
+        description: "Couleur explicitant la note"
+        tests:
+          - unique
+          - not_null
+      - name: ordre_classement
+        description: "Ordre de la note"
+        tests:
+          - unique
+          - not_null
+
   - name: dim_zone
+    description: "Détails des zones"
+    columns:
+      - name: zone_key
+        description: "Identifiant unique de la zone (Surrogate key, hash MD5)"
+        tests:
+          - unique
+          - not_null
+      - name: code_insee_ban
+        description: "Code insee (ban)"
+        tests:
+          - unique
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['75101','75102','75103','75104','75105','75106','75107','75108','75109','75110','75111','75112','75113','75114','75115','75116','75117','75118','75119','75120']
+  - name: dim_logement
+    description: "Dimension logement, logement = une adresse BAN + un étage."
+    columns:
+
+      - name: logement_key
+        description: "Identifiant unique du logement (hash de adresse_ban, numero_etage_appartement)."
+        tests:
+          - not_null
+          - unique
+
+      - name: adresse_ban
+        description: "Adresse normalisée BAN."
+        tests:
+          - not_null
+
+      - name: type_batiment
+        description: "Maison, appartement, immeuble."
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['maison', 'appartement', 'immeuble']
+      - name: annee_construction
+        description: "Année de construction du bâtiment."
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1800
+                max_value: 2026
+
+      - name: type_partie_haute
+        description: "Type calculé : comble_amenage / comble_perdu / toit_terrasse."
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['comble_amenage', 'comble_perdu', 'toit_terrasse']
+              config:
+                where: "type_partie_haute is not null"
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "qualite_isolation_partie_haute is not null"
+              config:
+                where: "type_partie_haute is not null"
+      - name: qualite_isolation_partie_haute
+        description: "Qualité d'isolation de la partie haute (COALESCE des 3 sources)."
+
   - name: fct_dpe
