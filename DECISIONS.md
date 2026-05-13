@@ -9,7 +9,6 @@
 - **Source** : CSV ADEME, millésime 2025, scope Paris
 - **Volume** : 
   - ~175 000 lignes après filtre loader Python (département 75, année 2025)
-  - ~50 000 lignes après filtre staging Paris arrondissements (75101-75120)
 - **Stack** : PostgreSQL 15 (Docker), dbt Core 1.11.7
 - **Livraison** : fin semaine 12
 
@@ -110,6 +109,15 @@
 - **Choix** : `date_reception_dpe` utilisée comme proxy de la chronologie réelle des diagnostics (à la place de `date_etablissement_dpe`, absente du dataset)
 - **Justification** : la date de réception ADEME suit généralement l'ordre d'établissement par le diagnostiqueur — un DPE plus récent ne peut pas être reçu avant un plus ancien dans la pratique courante
 - **Risque résiduel assumé** : un DPE établi tardivement et reçu après un autre plus récent (cas marginal). Acceptable au regard du volume traité.
+
+### 3.12 Transformation isolation partie haute
+
+- Les 3 colonnes ADEME `qualite_isolation_plancher_haut_*` (comble aménagé / comble perdu / toit terrasse) sont mutuellement exclusives par logement.
+- Choix : fusionner en 2 colonnes dans dim_logement :
+  - `qualite_isolation_partie_haute` : la valeur de qualité (COALESCE des 3)
+  - `type_partie_haute` : le type de structure ('comble_amenage', 'comble_perdu', 'toit_terrasse')
+- Justification : permet d'analyser la qualité d'isolation indépendamment du type, et le type indépendamment de la qualité.
+- Cas non couverts : logements sans aucune des 3 valeurs → NULL sur les deux colonnes (assumé)
 
 ---
 

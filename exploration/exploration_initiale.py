@@ -46,7 +46,7 @@ def explore(filepath, sample_size=50000):
     print(f"NULL periode_construction : {df_arr['periode_construction'].isna().mean()*100:.1f}%")
     print(f"\nRépartition par arrondissement :")
     print(df_arr['code_insee_ban'].value_counts().sort_index())
-    
+
     return df
 
 
