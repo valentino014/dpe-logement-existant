@@ -7,7 +7,6 @@
   - date_visite_diagnostiqueur entre 01-01-2025 et 31-12-2025
 - Volumes : 
   - ~175 000 lignes après filtre loader Python (département 75, année 2025)
-  - ~50 000 lignes après filtre staging Paris arrondissements (75101-75120)
 - Date d'extraction : 2026-04-24
 
 ## Analyse du dataset
@@ -16,7 +15,7 @@
 - Colonnes : 226
 
 ### Test d'unicité de la clé candidate
-- numero_dpe : UNIQUE (50 000 valeurs distinctes sur les 50 000 lignes de l'échantillon)
+- numero_dpe : UNIQUE
 - Confirme le grain "1 ligne par numero_dpe"
 
 ### Colonnes à exclure de la modélisation

@@ -9,7 +9,6 @@
 - **Source** : CSV ADEME, millésime 2025, scope Paris
 - **Volume** : 
   - ~175 000 lignes après filtre loader Python (département 75, année 2025)
-  - ~50 000 lignes après filtre staging Paris arrondissements (75101-75120)
 - **Stack** : PostgreSQL 15 (Docker), dbt Core 1.11.7
 - **Livraison** : fin semaine 12
 
@@ -110,6 +109,31 @@
 - **Choix** : `date_reception_dpe` utilisée comme proxy de la chronologie réelle des diagnostics (à la place de `date_etablissement_dpe`, absente du dataset)
 - **Justification** : la date de réception ADEME suit généralement l'ordre d'établissement par le diagnostiqueur — un DPE plus récent ne peut pas être reçu avant un plus ancien dans la pratique courante
 - **Risque résiduel assumé** : un DPE établi tardivement et reçu après un autre plus récent (cas marginal). Acceptable au regard du volume traité.
+
+### 3.12 Transformation isolation partie haute
+
+- Les 3 colonnes ADEME `qualite_isolation_plancher_haut_*` (comble aménagé / comble perdu / toit terrasse) sont mutuellement exclusives par logement.
+- Choix : fusionner en 2 colonnes dans dim_logement :
+  - `qualite_isolation_partie_haute` : la valeur de qualité (COALESCE des 3)
+  - `type_partie_haute` : le type de structure ('comble_amenage', 'comble_perdu', 'toit_terrasse')
+- Justification : permet d'analyser la qualité d'isolation indépendamment du type, et le type indépendamment de la qualité.
+- Cas non couverts : logements sans aucune des 3 valeurs → NULL sur les deux colonnes (assumé)
+
+### 3.13 SK centralisées dans `int_dpe_latest`
+
+- Choix : générer les 4 surrogate keys (logement_key, zone_key, etiquette_dpe_key, etiquette_ges_key) dans `int_dpe_latest` plutôt que dans chaque dim et dans la fact par après.
+- Justification :
+  - DRY : un seul endroit où la composition des clés est définie
+  - Si la définition métier d'un logement change (ex : ajout de la surface dans le hash), modification à un seul endroit
+  - Les dims et la fact consomment les SK déjà calculées via SELECT direct (pas de re-hash)
+- Trade-off assumé : `int_dpe_latest` devient "fact-aware" (connait la structure des dims). C'est moins orthodoxe que la convention Kimball stricte (SK générée dans chaque dim) mais le résultat est identique et le code plus court.
+
+### 3.14 Gestion du doublon de code_postal_ban dans dim_zone
+
+- Constat : un même `code_insee_ban` peut avoir plusieurs `code_postal_ban` (ex. 16e arrondissement, INSEE 75116 → codes postaux 75016 ou 75116).
+- Choix : `GROUP BY code_insee_ban` + `MAX(code_postal_ban)` pour garantir 1 ligne par arrondissement seulement.
+- Justification : `code_postal_ban` est un attribut secondaire, pas besoin d'exhaustivité. `MAX` est arbitraire mais déterministe.
+- Limite assumée : le code postal affiché peut ne pas être le plus "canonique" (75016 vs 75116) mais cela est suffisant.
 
 ---
 
