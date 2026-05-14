@@ -4,10 +4,11 @@ with latest_dpe as (
     --MA VERSION select * from {{ ref('int_dpe_latest') }}
     select distinct
         code_insee_ban,
-        code_postal_ban
+        max(code_postal_ban) as code_postal_ban 
     from {{ ref('int_dpe_latest') }}
     where code_insee_ban is not null
         and code_insee_ban between '75101' and '75120'
+    group by code_insee_ban
 )
 select
     {{ dbt_utils.generate_surrogate_key(['code_insee_ban']) }} as zone_key,
@@ -34,6 +35,5 @@ select
         when '75118' then 'Paris 18e'
         when '75119' then 'Paris 19e'
         when '75120' then 'Paris 20e'
-        else 'N/A'
     end as nom_arrondissement     
 from latest_dpe

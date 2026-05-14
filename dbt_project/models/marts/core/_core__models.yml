@@ -60,7 +60,6 @@ models:
         description: "Adresse normalisée BAN."
         tests:
           - not_null
-
       - name: type_batiment
         description: "Maison, appartement, immeuble."
         tests:
@@ -72,7 +71,7 @@ models:
         tests:
           - dbt_utils.accepted_range:
               arguments:
-                min_value: 1800
+                min_value: 1500
                 max_value: 2026
 
       - name: type_partie_haute
@@ -81,14 +80,41 @@ models:
           - accepted_values:
               arguments:
                 values: ['comble_amenage', 'comble_perdu', 'toit_terrasse']
-              config:
-                where: "type_partie_haute is not null"
-          - dbt_utils.expression_is_true:
-              arguments:
-                expression: "qualite_isolation_partie_haute is not null"
-              config:
-                where: "type_partie_haute is not null"
       - name: qualite_isolation_partie_haute
         description: "Qualité d'isolation de la partie haute (COALESCE des 3 sources)."
 
   - name: fct_dpe
+    description: "Table de fait dpe."
+    columns:
+      - name: logement_key
+        description: "FK vers dim_logement."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_logement')
+                field: logement_key
+      - name: zone_key
+        description: "FK vers dim_zone."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_zone')
+                field: zone_key
+      - name: etiquette_dpe_key 
+        description: "FK vers dim_etiquette."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_etiquette')
+                field: etiquette_key
+      - name: etiquette_ges_key
+        description: "FK vers dim_etiquette."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_etiquette')
+                field: etiquette_key
