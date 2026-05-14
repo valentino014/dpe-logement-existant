@@ -128,6 +128,13 @@
   - Les dims et la fact consomment les SK déjà calculées via SELECT direct (pas de re-hash)
 - Trade-off assumé : `int_dpe_latest` devient "fact-aware" (connait la structure des dims). C'est moins orthodoxe que la convention Kimball stricte (SK générée dans chaque dim) mais le résultat est identique et le code plus court.
 
+### 3.14 Gestion du doublon de code_postal_ban dans dim_zone
+
+- Constat : un même `code_insee_ban` peut avoir plusieurs `code_postal_ban` (ex. 16e arrondissement, INSEE 75116 → codes postaux 75016 ou 75116).
+- Choix : `GROUP BY code_insee_ban` + `MAX(code_postal_ban)` pour garantir 1 ligne par arrondissement seulement.
+- Justification : `code_postal_ban` est un attribut secondaire, pas besoin d'exhaustivité. `MAX` est arbitraire mais déterministe.
+- Limite assumée : le code postal affiché peut ne pas être le plus "canonique" (75016 vs 75116) mais cela est suffisant.
+
 ---
 
 ## 4. Décisions techniques
