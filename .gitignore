@@ -1,18 +1,31 @@
-# python
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Python
 __pycache__/
 *.pyc
+*.pyo
 .env
+.env.*
 venv/
-.DS_Store
+.venv/
 .coverage
+*.ipynb_checkpoints/
 
-# données brutes
-/data
-*.csv
+# Données brutes
+/data/
 *.xlsx
+*.csv
+!dbt_project/seeds/*.csv
+
+# Secrets
+profiles.yml
 
 # dbt
-target/
-dbt_packages/
 logs/
-.user.yml
