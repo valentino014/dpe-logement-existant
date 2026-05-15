@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: dim_etiquette
-    description: "Détails des étiquettes (DPE et GES) par dpe"
+    description: "{{ doc('dim_etiquette_doc') }}"
     columns:
       - name: etiquette_key
         description: "Identifiant unique de l'étiquette (Surrogate key, hash MD5)"
@@ -31,7 +31,7 @@ models:
           - not_null
 
   - name: dim_zone
-    description: "Détails des zones"
+    description: "{{ doc('dim_zone_doc') }}"
     columns:
       - name: zone_key
         description: "Identifiant unique de la zone (Surrogate key, hash MD5)"
@@ -47,7 +47,7 @@ models:
               arguments:
                 values: ['75101','75102','75103','75104','75105','75106','75107','75108','75109','75110','75111','75112','75113','75114','75115','75116','75117','75118','75119','75120']
   - name: dim_logement
-    description: "Dimension logement, logement = une adresse BAN + un étage."
+    description: "{{ doc('dim_logement_doc') }}"
     columns:
 
       - name: logement_key
@@ -84,7 +84,7 @@ models:
         description: "Qualité d'isolation de la partie haute (COALESCE des 3 sources)."
 
   - name: fct_dpe
-    description: "Table de fait dpe."
+    description: "{{ doc('fct_dpe_doc') }}"
     columns:
       - name: logement_key
         description: "FK vers dim_logement."

@@ -21,8 +21,6 @@ select
     conso_5_usages_par_m2_ef,
     emission_ges_5_usages,
     emission_ges_5_usages_par_m2,
-    dpe_latest.numero_etage_appartement,
-    dpe_latest.code_insee_ban,
     dpe_latest.logement_key,
     dpe_latest.zone_key,
     dpe_latest.etiquette_dpe_key,
