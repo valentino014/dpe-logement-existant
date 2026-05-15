@@ -1,0 +1,8 @@
+lettre,libelle,couleur_hex,ordre_classement
+A,Extrêmement performant,#00A06D,1
+B,Très performant,#52B153,2
+C,Assez performant,#86BC4C,3
+D,Assez peu performant,#FFCC00,4
+E,Peu performant,#FCA017,5
+F,Très peu performant,#EE7521,6
+G,Extrêmement peu performant,#D63B27,7

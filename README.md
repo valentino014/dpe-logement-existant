@@ -28,6 +28,12 @@ Le DPE est au cœur de l'actualité française afin de réduire les émissions d
 1. Cloner le repo
 ```bash
 git clone https://github.com/valentino014/dpe-logement-existant.git
+cd dpe-logement-existant
+python3 -m venv venv
+# Linux/Mac
+# source venv/bin/activate
+# Windows
+venv\Scripts\activate
 ```
 
 2. Installer les dépendances:
@@ -41,35 +47,80 @@ pip install -r requirements.txt
    - Appliquer les filtres : `code_departement_ban = 75`, `date_visite_diagnostiqueur` entre `2025-01-01` et `2025-12-31`
    - Exporter en CSV et placer le fichier dans `data/dpe03existant.csv`
 
-4. Lancer PostgreSQL:
+4. Configurer les variables d'environnement :
+```bash
+cp .env.example .env
+# Éditer .env si besoin (par défaut: postgres / postgres / projet1_db)
+```
+
+5. Lancer PostgreSQL:
 ```bash
 docker compose up -d
 ```
 
-5. Ouvrir postgreSQL en ligne de commande :
+6. Ouvrir postgreSQL en ligne de commande :
 ```bash
 docker exec -it projet1_postgres psql -U postgres -d projet1_db
-```
-
-6. Créer le schéma dans PostgreSQL :
-```bash
-CREATE SCHEMA IF NOT EXISTS public;
 ```
 
 7. Lancer python:
 ```bash
 python3 main.py
 ```
+Ce script lit `data/dpe03existant.csv`, le transforme et l'insère dans la table `raw.dpe` de Postgres (peut prendre 1-2 min).
 
-## Tests
+8. Installer les packages dbt :
+```bash
+cd dbt_project
+dbt deps
+```
 
+9. Configurer la connexion dbt :
+   Vérifier que `~/.dbt/profiles.yml` est configuré pour pointer vers ton Postgres local. Exemple :
+```yaml
+dpe_project:
+  outputs:
+    dev:
+      type: postgres
+      host: localhost
+      port: 5433
+      user: postgres
+      password: postgres
+      dbname: projet1_db
+      schema: dbt
+      threads: 4
+  target: dev
+```
+
+10. Construire et tester le projet :
 ```bash
 dbt build
 ``` 
 
+## Vérification
+
+```bash
+dbt docs generate
+dbt docs serve
+```
+
 ## Exemples de requêtes business
 
-[Q5 par exemple : pires arrondissements DPE/GES, avec le SQL]
+### Q5 — Distribution des étiquettes DPE par arrondissement parisien
+
+```sql
+select
+	de.lettre,
+	dz.nom_arrondissement,
+	count(*) as nb_dpe
+from fct_dpe fd
+inner join dim_etiquette de on fd.etiquette_dpe_key = de.etiquette_key
+inner join dim_zone dz on fd.zone_key = dz.zone_key
+group by nom_arrondissement, de.lettre
+order by de.lettre, dz.nom_arrondissement
+limit 150
+```
+<!-- TODO AUTRE QUESTION -->
 
 ## Décisions techniques
 
