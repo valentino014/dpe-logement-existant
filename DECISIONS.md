@@ -22,7 +22,7 @@
 | Q2 | Y a-t-il un lien entre la note d'un logement et son année de construction ? | Analyse via `periode_construction` (cf. 3.4) |
 | Q3 | Quelles sont les émissions de CO2 par type de logement ? | — |
 | Q4 | Quelles parties du logement (murs, planchers, menuiseries...) sont les moins bien isolées par type de logement ? | Question initialement formulée sur les "3 matériaux les plus utilisés", reformulée car la liste des matériaux n'existe pas dans le dataset ADEME |
-| Q5 | Quels arrondissements ont les moins bonnes notes DPE et GES ? | Question initialement formulée comme "certains quartiers sont-ils défavorisés ?", reformulée car le dataset ADEME ne contient pas de données socio-économiques. Enrichissement futur possible : croiser avec revenu médian INSEE par arrondissement (hors scope Projet 1) |
+| Q5 | Quels arrondissements ont les moins bonnes notes DPE et GES ? | Question initialement formulée comme "certains quartiers sont-ils défavorisés ?", reformulée car le dataset ADEME ne contient pas de données socio-économiques. Enrichissement futur possible : croiser avec revenu médian INSEE par arrondissement (hors scope du Projet 1) |
 
 ---
 
@@ -78,19 +78,22 @@
 
 - Tous les modèles en `materialized='table'` dans Projet 1
 - **Justification** : source figée, volume maîtrisé (~50K lignes Paris), simplicité prioritaire pour un premier projet dbt
-- Migration vers `incremental` à reconsidérer si scope Projet 2 = ingestion régulière
+- Exception : `fct_dpe` matérialisée en `incremental` (cf. 3.13). 
+Choix pédagogique pour démontrer la maîtrise du pattern. 
+Sur un CSV figé, le bénéfice opérationnel est nul : le filtre 
+is_incremental() retourne systématiquement 0 ligne au 2e run.
 
 ### 3.8 Late-arriving data
 
-- Pas de stratégie de late-arriving data dans le scope semaine 12
-- **Justification** : CSV ADEME 2025 figé, ingestion unique, pas de réingestion prévue
-- **Si évolution vers chargement mensuel des millésimes ADEME** : ajout de `loaded_at = current_timestamp` au staging (avec `materialized='table'` pour figer le timestamp), puis filtre incremental sur `loaded_at`. Raison : seule date sous contrôle du pipeline, indépendante des dates métier publiées rétroactivement par l'ADEME.
+- Pas de stratégie de late-arriving data dans le scope semaine 12.
+- Justification : CSV ADEME 2025 figé, ingestion unique, pas de retraitement rétroactif prévu.
+- À reconsidérer si Projet 2 traite l'ingestion mensuelle des millésimes ADEME.
 
 ### 3.9 Role-playing dimension sur `dim_etiquette`
 
-- **Choix** : une seule `dim_etiquette` partagée entre l'étiquette DPE et l'étiquette GES, jointe deux fois dans `fct_dpe` via deux FK distinctes et deux alias en requête
+- **Choix** : une seule `dim_etiquette` partagée entre l'étiquette DPE et l'étiquette GES
 - **Justification** : les deux étiquettes partagent le même domaine de valeurs (A-G) et les mêmes attributs (couleur, libellé, ordre, seuils). Créer deux dimensions séparées violerait DRY et créerait deux sources de vérité pour la même nomenclature : si l'ADEME modifie le code couleur du "C", il faudrait le mettre à jour à deux endroits. La role-playing dim est le pattern Kimball standard pour cette situation.
-- **Implémentation** : `fct_dpe` contient `etiquette_dpe_key` et `etiquette_ges_key` (deux FK vers la même table). Les requêtes analytiques font deux `LEFT JOIN` aliasés (ex. `dpe_etiq` et `ges_etiq`).
+- **Implémentation** : `int_dpe_latest` contient `etiquette_dpe_key` et `etiquette_ges_key` (deux FK vers la même table).
 
 ### 3.10 Dédoublonnage des DPE (`int_dpe_latest`)
 
@@ -159,7 +162,7 @@
 
 - `unique` + `not_null` sur la PK de chaque modèle staging et modèle modélisé
 - `accepted_values` sur `etiquette_dpe` et `etiquette_ges` (A à G), précédé d'une normalisation `upper(trim())` en staging pour protéger contre la donnée sale (espaces parasites, casse)
-- `relationships` sur les FK de la fact (à ajouter quand les marts seront créés cette semaine)
+- `relationships` sur les FK de la fact
 
 ### 4.4 Traitement des cas particuliers
 
