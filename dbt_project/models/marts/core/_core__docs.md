@@ -8,7 +8,7 @@
 
 **Usage métier** :
 - **Q1** : croisée avec `fct_dpe` pour calculer la consommation moyenne par `type_batiment` (type de logement ADEME)
-- **Q2** : `periode_construction` (`annee_construction` pas utilisé car ADEME a ~+50% de null) utilisée pour analyser le lien construction / performance
+- **Q2** : `periode_construction` (`annee_construction` pas utilisée car ADEME a ~56% de null) utilisée pour analyser le lien construction / performance
 - **Q4** : colonnes `qualite_isolation_*` pour identifier les parties les moins bien isolées d'un logement
 
 **Transformation notable** : les 3 colonnes ADEME `qualite_isolation_plancher_haut_*` 
@@ -18,7 +18,7 @@ via COALESCE + CASE WHEN (cf. décision 3.12).
 **Limites assumées** :
 - Pas de prise en compte de la surface dans la clé de logement (faux négatifs sur 
   appartements identiques au même étage et à la même adresse)
-- `annee_construction` contient des valeurs aberrantes (< 1700) flaguées mais conservées juste pour visuel
+- `annee_construction` contient des valeurs aberrantes (< 1700) marquées mais signalées juste pour visuel
 {% enddocs %}
 
 {% docs dim_etiquette_doc %}
@@ -44,12 +44,12 @@ via COALESCE + CASE WHEN (cf. décision 3.12).
 sur code_insee_ban pour 1 ligne par arrondissement, cf. décision 3.14).
 
 **Usage métier** :
-- **Q5** : croisée avec dim_logement pour valider le lien entre `lettre` et `periode_construction`
+- **Q5** : croisée avec `fct_dpe` et `dim_etiquette` pour identifier les arrondissements aux moins bonnes notes DPE et GES
 
 **Transformation notable** : il y a des doublons pour `code_postal_ban` (cf. décision 3.14)
 
 **Limites assumées** :
-- Je perd le côté canonique de `code_postal_ban` mais pas utile pour le scope de ce projet
+- Je perds le côté canonique de `code_postal_ban` mais pas utile pour le scope de ce projet
 {% enddocs %}
 
 {% docs fct_dpe_doc %}
@@ -68,6 +68,6 @@ sur code_insee_ban pour 1 ligne par arrondissement, cf. décision 3.14).
 - Utilisation d'une matérialisation incremental (cf. décision 3.7)
 
 **Limites assumées** :
-- Pas de dim_dpe
+- Pas de dim_dpe séparée : numero_dpe reste en degenerate dimension dans la fact (cf. 3.1)
 - Incremental ajouté pour montrer le pattern, pas pour une utilisation réelle
 {% enddocs %}
