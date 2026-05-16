@@ -203,7 +203,7 @@ erDiagram
 
 ## Documentation
 
-Documentation du DAG de ce projet : ![dbt lineage](docs/dbt_lineage.png)
+Documentation du DAG de ce projet : ![dbt lineage](docs/lineage-graph.png)
 
 ## Ce que j'ai appris
 
