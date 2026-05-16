@@ -171,12 +171,6 @@ is_incremental() retourne systématiquement 0 ligne au 2e run.
 
 ---
 
-## 5. Dette technique assumée (à traiter cette semaine ou reportée)
-
-| Item | Échéance | Statut |
-|---|---|---|
-| Marts complets (`fct_dpe`, `dim_logement`, `dim_zone`, `dim_etiquette`) | Sem 12 | En cours (J66-J67) |
-| Tests `relationships` sur FK de `fct_dpe` | Sem 12 | À faire après création des marts |
-| Documentation détaillée (doc blocks) | Sem 12 | Prévu J68 |
-| `dbt-expectations` : exploration et 3-4 tests avancés | Sem 12 (joker possible) | Reporté à sem 13 si débordement (cf. plan joker) |
-| README recruteur avec diagramme d'architecture | Sem 12 | Prévu J68-J69 |
+> Document figé à la livraison v1.0.0 (sem 12). 
+> Les évolutions Projet 2 sont trackées dans le README (section Roadmap) 
+> et seront documentées au format DECISIONS le moment venu.
