@@ -65,7 +65,7 @@ sur code_insee_ban pour 1 ligne par arrondissement, cf. décision 3.14).
 
 **Transformation notable** : 
 - La jointure entre `dim_etiquette`, `dim_zone` et `dim_logement` a lieu uniquement dans `int_dpe_latest` (cf. décision 3.13)
-- Utilisation d'une matérialisation incremental (cf. décision 3.8-3.9)
+- Utilisation d'une matérialisation incremental (cf. décision 3.7)
 
 **Limites assumées** :
 - Pas de dim_dpe

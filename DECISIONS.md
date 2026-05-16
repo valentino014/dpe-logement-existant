@@ -83,7 +83,7 @@ Choix pédagogique pour démontrer la maîtrise du pattern.
 Sur un CSV figé, le bénéfice opérationnel est nul : le filtre 
 is_incremental() retourne systématiquement 0 ligne au 2e run.
 
-### 3.8 Late-arriving data
+### 3.8 Pas de stratégie de late-arriving data
 
 - Pas de stratégie de late-arriving data dans le scope semaine 12.
 - Justification : CSV ADEME 2025 figé, ingestion unique, pas de retraitement rétroactif prévu.
