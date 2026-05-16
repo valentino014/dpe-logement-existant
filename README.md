@@ -8,7 +8,7 @@ Le DPE est au cœur de l'actualité française afin de réduire les émissions d
 
 ## Stack
 
-- Python 3.10.12(pandas, sqlalchemy, psycopg2-binary)
+- Python 3.10.12 (pandas, sqlalchemy, psycopg2-binary)
 - dbt Core 1.11.7
 - PostgreSQL 15 (Docker)
 
@@ -120,17 +120,23 @@ group by nom_arrondissement, de.lettre
 order by de.lettre, dz.nom_arrondissement
 limit 150
 ```
-<!-- TODO AUTRE QUESTION -->
 
 ## Décisions techniques
 
-- J'ai choisi de faire une degenerate dim avec dpe car il n'y avait pas beaucoup d'attributs descriptifs. De plus, je voulais garder cela simple. 
-- Role-playing sur la `dim_etiquette` afin de réutiliser celle-ci pour les étiquettes DPE et GES
+- **Degenerate dim** : J'ai choisi de faire une degenerate dim avec dpe car il n'y avait pas beaucoup d'attributs descriptifs. De plus, je voulais garder cela simple. 
+- **Role-playing dim** : `dim_etiquette` est réutilisée pour les étiquettes DPE et GES ([§3.9](./DECISIONS.md#39-role-playing-dimension-sur-dim_etiquette))
+- **SK centralisées** : surrogate keys générées dans `int_dpe_latest` ([§3.13](./DECISIONS.md#313-sk-centralisées-dans-int_dpe_latest))
 
-### Limites assumées
-- **Périmètre géographique** : Paris uniquement (arrondissements 75101-75120).
-- **Annee_construction n'est pas utilisée** : ~50% de NULL dans la source ADEME, remplacée par `periode_construction` qui est plus fiable.
-- **Pas de gestion des SCD type 2** : `dim_logement` est en SCD type 1 (écrasement). Si un logement change de `type_batiment`, l'historique est perdu.
+## Limites assumées
+
+- **Périmètre géographique** : Sélection de Paris uniquement (arrondissements 75101-75120).
+- **Annee_construction n'est pas utilisée** : 56% de NULL dans la source de ADEME, remplacée par `periode_construction` qui est plus fiable.
+- **Pas de gestion des SCD type 2** : `dim_logement` est en SCD type 1 (écrasement à chaque run). Si un logement change de `type_batiment`, l'historique est donc perdu.
+
+## Roadmap Projet 2 (envisagée)
+
+- Ingestion mensuelle des millésimes ADEME sur plusieurs années
+- Ajout d'une dim géographique enrichie pour obtenir le revenu médian (via INSEE) et recouper cela avec les étiquettes énergie afin de voir un potentiel lien entre note DPE/GES et revenu
 
 ## Schéma en étoile
 
