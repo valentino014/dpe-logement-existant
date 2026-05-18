@@ -67,7 +67,7 @@ docker exec -it projet1_postgres psql -U postgres -d projet1_db
 ```bash
 python3 main.py
 ```
-Ce script lit `data/dpe03existant.csv`, le transforme et l'insère dans la table `raw.dpe` de Postgres (peut prendre 1-2 min).
+Ce script lit `data/dpe03existant.csv`, le transforme et l'insère dans la table `public.dpe` de Postgres (peut prendre jusqu'à 10 min).
 
 8. Installer les packages dbt :
 ```bash
@@ -116,9 +116,8 @@ select
 from fct_dpe fd
 inner join dim_etiquette de on fd.etiquette_dpe_key = de.etiquette_key
 inner join dim_zone dz on fd.zone_key = dz.zone_key
-group by nom_arrondissement, de.lettre
-order by de.lettre, dz.nom_arrondissement
-limit 150
+group by dz.nom_arrondissement, dz.code_insee_ban, de.lettre
+order by de.lettre, dz.code_insee_ban
 ```
 
 ## Décisions techniques
@@ -209,7 +208,7 @@ Documentation du DAG de ce projet : ![dbt lineage](docs/lineage-graph.png)
 
 - Mise en place de PostgreSQL isolé via Docker Compose (port 5433 pour éviter des conflits avec un autre projet)
 - Ingestion d'un CSV volumineux (~175k lignes et 254 colonnes) à l'aide de pandas et chunksize pour gérer la mémoire
-- Structuration d'un projet dbt séparant données brutes (`raw.*`) et modélisation 
+- Structuration d'un projet dbt séparant données brutes et modélisation 
 - Ajout de test pour valider les données
 - Utilisation du pattern Kimball Role-playing pour la gestion des étiquettes 
 

@@ -1,6 +1,6 @@
 # DECISIONS — Projet DPE Logements Existants (Paris 2025)
 
-> Document de traçabilité des décisions techniques et de modélisation prises pendant la construction du projet. Chaque décision est défendable oralement en 30 secondes.
+> Document de traçabilité des décisions techniques et de modélisation prises pendant la construction du projet.
 
 ---
 
@@ -87,7 +87,6 @@ is_incremental() retourne systématiquement 0 ligne au 2e run.
 
 - Pas de stratégie de late-arriving data dans le scope semaine 12.
 - Justification : CSV ADEME 2025 figé, ingestion unique, pas de retraitement rétroactif prévu.
-- À reconsidérer si Projet 2 traite l'ingestion mensuelle des millésimes ADEME.
 
 ### 3.9 Role-playing dimension sur `dim_etiquette`
 
@@ -101,16 +100,16 @@ is_incremental() retourne systématiquement 0 ligne au 2e run.
 - **Critère "le plus récent"** : tri sur `date_reception_dpe` desc, tiebreaker `numero_dpe` desc en cas de date identique.
 - **Limites assumées** :
   - Deux appartements distincts au même étage et à la même adresse seront fusionnés en 1 (faux négatif — cas rare en immeuble haussmannien type Paris)
-  - Pas de prise en compte de la surface dans la clé de partition : choix de simplicité assumé pour Projet 1
+  - Pas de prise en compte de la surface dans la clé de partition : choix de simplicité assumé pour le Projet 1
 - **Pourquoi cette approche** :
   - Pragmatique : aucun identifiant unique de logement n'existe dans le dataset ADEME
   - Réversible : tous les DPE bruts restent disponibles dans `stg_dpe`, seul l'intermediate dédoublonne
   - Adaptable : la règle peut évoluer (ajout de la surface, géocodage fin) selon les besoins métier
 
-### 3.11 Proxy temporel "DPE le plus récent" (`date_reception_dpe`)
+### 3.11 Approximation chronologique : date_reception_dpe comme date de référence
 
-- **Choix** : `date_reception_dpe` utilisée comme proxy de la chronologie réelle des diagnostics (à la place de `date_etablissement_dpe`, absente du dataset)
-- **Justification** : la date de réception ADEME suit généralement l'ordre d'établissement par le diagnostiqueur — un DPE plus récent ne peut pas être reçu avant un plus ancien dans la pratique courante
+- **Choix** : `date_reception_dpe` utilisée comme date chronologique des diagnostics, à défaut de `date_etablissement_dpe` (absente du dataset).
+- **Justification** : la date de réception ADEME suit généralement l'ordre d'établissement par le diagnostiqueur. Un DPE plus récent ne peut pas être reçu avant un plus ancien dans la pratique courante.
 - **Risque résiduel assumé** : un DPE établi tardivement et reçu après un autre plus récent (cas marginal). Acceptable au regard du volume traité.
 
 ### 3.12 Transformation isolation partie haute
@@ -120,7 +119,7 @@ is_incremental() retourne systématiquement 0 ligne au 2e run.
   - `qualite_isolation_partie_haute` : la valeur de qualité (COALESCE des 3)
   - `type_partie_haute` : le type de structure ('comble_amenage', 'comble_perdu', 'toit_terrasse')
 - Justification : permet d'analyser la qualité d'isolation indépendamment du type, et le type indépendamment de la qualité.
-- Cas non couverts : logements sans aucune des 3 valeurs → NULL sur les deux colonnes (assumé)
+- Cas non couverts : logements sans aucune des 3 valeurs → NULL sur les deux colonnes (assumé).
 
 ### 3.13 SK centralisées dans `int_dpe_latest`
 
@@ -168,9 +167,3 @@ is_incremental() retourne systématiquement 0 ligne au 2e run.
 
 - `code_insee_ban = 75056` (3 lignes Paris commune) : exclues du périmètre analytique au staging (filtre `where code_insee_ban in (...)` listant uniquement les 20 arrondissements)
 - `annee_construction` avec valeurs douteuses (< 1700 par exemple) : conservées comme attribut secondaire dans `dim_logement` mais flagguées, jamais utilisées comme dimension principale (cf. 3.4)
-
----
-
-> Document figé à la livraison v1.0.0 (sem 12). 
-> Les évolutions Projet 2 sont trackées dans le README (section Roadmap) 
-> et seront documentées au format DECISIONS le moment venu.
