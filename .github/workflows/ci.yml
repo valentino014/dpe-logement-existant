@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./dbt_project/dbt_project.yml 
+        working-directory: ./dbt_project
     env:
       DBT_PROFILES_DIR: ${{ github.workspace }}/ci
     services:
