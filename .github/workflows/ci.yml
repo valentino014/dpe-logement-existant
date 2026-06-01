@@ -31,6 +31,6 @@ jobs:
         with:
           python-version: "3.10.12"
       - run: pip install dbt-postgres
-      - run: dbt deps
-      - run: dbt debug
-      - run: dbt build
+      - run: python -m dbt.cli.main deps
+      - run: python -m dbt.cli.main debug
+      - run: python -m dbt.cli.main build
