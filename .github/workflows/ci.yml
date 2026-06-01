@@ -6,8 +6,11 @@ on:
 jobs:
   dbt-build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./dbt_project/dbt_project.yml 
     env:
-      DBT_PROFILES_DIR: ./ci
+      DBT_PROFILES_DIR: ${{ github.workspace }}/ci
     services:
       postgres:
         image: postgres:15
