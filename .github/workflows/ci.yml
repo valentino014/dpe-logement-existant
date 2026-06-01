@@ -30,8 +30,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.10.12"
-      - run: python -m pip install dbt-postgres
-      - run: python -m dbt.cli.main --version
-      - run: python -m dbt.cli.main deps
-      - run: python -m dbt.cli.main debug
-      - run: python -m dbt.cli.main build
+      - run: pip install dbt-core==1.11.7 dbt-postgres==1.10.0
+      - run: dbt --version
+      - run: dbt deps
+      - run: dbt debug
+      - run: dbt build
