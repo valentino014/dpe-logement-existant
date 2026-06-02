@@ -5,8 +5,8 @@ dpe_project:
       type: postgres
       host: localhost
       port: 5432
-      user: dbt
-      password: dbt
-      dbname: dbt_ci
+      user: "{{ env_var('DBT_USER') }}"
+      password: "{{ env_var('DBT_PASSWORD') }}"
+      dbname: "{{ env_var('DBT_DBNAME') }}"
       schema: ci
       threads: 4
