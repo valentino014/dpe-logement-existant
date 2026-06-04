@@ -118,3 +118,7 @@ models:
               arguments:
                 to: ref('dim_etiquette')
                 field: etiquette_key
+      - name: date_visite_diagnostiqueur
+        description: "Date de la visite du diagnostiqueur"
+        tests:
+          - date_more_than_today

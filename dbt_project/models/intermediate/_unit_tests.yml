@@ -1,0 +1,11 @@
+unit_tests:
+  - name: int_dpe_latest_garde_la_plus_recente
+    model: int_dpe_latest
+    given:
+      - input: ref('stg_dpe')
+        rows:
+          - { adresse_ban: '17 rue de rivoli', numero_etage_appartement: 12, date_reception_dpe: '2025-12-01', numero_dpe: 123463 }
+          - { adresse_ban: '17 rue de rivoli', numero_etage_appartement: 12, date_reception_dpe: '2020-02-17', numero_dpe: 12346 }
+    expect:
+      rows:
+        - { adresse_ban: '17 rue de rivoli', numero_etage_appartement: 12, date_reception_dpe: '2025-12-01', numero_dpe: 123463 }

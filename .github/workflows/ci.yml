@@ -40,6 +40,8 @@ jobs:
       - run: dbt --version
       - run: dbt deps
       - run: dbt debug
+      - name: Unit tests
+        run: dbt test --select test_type:unit
       - name: Full build (main)
         if: github.event_name == 'push'
         run: dbt build
