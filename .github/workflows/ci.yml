@@ -1,0 +1,55 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  dbt-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./dbt_project
+    env:
+      DBT_PROFILES_DIR: ${{ github.workspace }}/ci
+      DBT_USER: ${{ vars.DBT_USER }}
+      DBT_PASSWORD: ${{ secrets.DBT_PASSWORD }}
+      DBT_DBNAME: ${{ vars.DBT_DBNAME }}
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: ${{ vars.DBT_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DBT_PASSWORD }}
+          POSTGRES_DB: ${{ vars.DBT_DBNAME }}
+        ports:
+          - "5432:5432"
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Déclenché par ${{ github.event_name }}"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10.12"
+      - run: pip install dbt-core==1.11.7 dbt-postgres==1.10.0
+      - run: dbt --version
+      - run: dbt deps
+      - run: dbt debug
+      - name: Préparer la source (schéma vide)
+        run: psql -h localhost -U "$DBT_USER" -d "$DBT_DBNAME" -f "$GITHUB_WORKSPACE/ci/setup/source_schema.sql"
+        env:
+          DBT_USER: ${{ vars.DBT_USER }}
+          DBT_DBNAME: ${{ vars.DBT_DBNAME }}
+          PGPASSWORD: ${{ secrets.DBT_PASSWORD }}
+      - name: dbt build
+        run: dbt build
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dbt-target
+          path: dbt_project/target/   

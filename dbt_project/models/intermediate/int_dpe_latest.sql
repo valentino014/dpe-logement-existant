@@ -1,7 +1,42 @@
 {{ config(materialized='table') }}
--- Grain : 1 ligne = 1 dpe par logement
+-- Grain : 1 ligne = adresse + étage
 with initial as (
-    SELECT * FROM {{ ref('stg_dpe') }}
+    SELECT 
+		numero_dpe,
+        date_visite_diagnostiqueur,
+        date_fin_validite_dpe,
+        date_reception_dpe,
+        modele_dpe,
+        version_dpe,
+        methode_application_dpe,
+        conso_chauffage_ef,
+        conso_ecs_ef,
+        conso_refroidissement_ef,
+        conso_eclairage_ef,
+        conso_auxiliaires_ef,
+        conso_5_usages_ef,
+        conso_5_usages_par_m2_ef,
+        emission_ges_5_usages,
+        emission_ges_5_usages_par_m2,
+        type_batiment,
+        periode_construction,
+        annee_construction,
+        surface_habitable_logement,
+        type_installation_chauffage,
+        qualite_isolation_enveloppe,
+        qualite_isolation_murs,
+        qualite_isolation_plancher_bas,
+        qualite_isolation_menuiseries,
+        code_insee_ban,
+        code_postal_ban,
+        etiquette_dpe,
+        etiquette_ges,
+        adresse_ban,
+        numero_etage_appartement,
+        qualite_isolation_plancher_haut_comble_amenage,
+        qualite_isolation_plancher_haut_comble_perdu,
+        qualite_isolation_plancher_haut_toit_terrasse 
+	FROM {{ ref('stg_dpe') }}
 ),
 deduplicated as (
 	select
