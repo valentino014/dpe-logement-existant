@@ -1,3 +1,4 @@
+[![CI](https://github.com/valentino014/dpe-logement-existant/actions/workflows/ci.yml/badge.svg)](https://github.com/valentino014/dpe-logement-existant/actions/workflows/ci.yml)
 # DPE Logements existants — Analytics dbt
 
 Projet dbt en cours de construction sur le Diagnostic de Performance Énergétique des logements existants sur l'année 2025 à Paris.
