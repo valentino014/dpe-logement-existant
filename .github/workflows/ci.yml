@@ -40,16 +40,16 @@ jobs:
       - run: dbt --version
       - run: dbt deps
       - run: dbt debug
-      - name: Unit tests
-        run: dbt test --select test_type:unit
-      - name: Full build (main)
-        if: github.event_name == 'push'
+      - name: Préparer la source (schéma vide)
+        run: psql -h localhost -U "$DBT_USER" -d "$DBT_DBNAME" -f "$GITHUB_WORKSPACE/ci/setup/source_schema.sql"
+        env:
+          DBT_USER: ${{ vars.DBT_USER }}
+          DBT_DBNAME: ${{ vars.DBT_DBNAME }}
+          PGPASSWORD: ${{ secrets.DBT_PASSWORD }}
+      - name: dbt build
         run: dbt build
-      - name: Slim CI build (PR)
-        if: github.event_name == 'pull_request'
-        run: dbt build --select state:modified+ --defer --state ci/state
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: dbt-target
-          path: dbt_project/target/
+          path: dbt_project/target/   
